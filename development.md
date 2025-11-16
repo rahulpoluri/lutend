@@ -1,14 +1,96 @@
-# FastAPI Project - Development
+# Lutend Platform - Development Guide
+
+This guide covers local development workflows for the Lutend monorepo, including Docker Compose setup, PNPM workspace management, and development best practices.
+
+## Prerequisites
+
+Before starting development, ensure you have:
+
+- **Node.js** >= 18.0.0 (managed with nvm or fnm)
+- **PNPM** >= 8.0.0 (see [PNPM-GUIDE.md](./PNPM-GUIDE.md) for installation)
+- **Python** >= 3.11 with [uv](https://docs.astral.sh/uv/)
+- **Docker** and **Docker Compose**
+- **Git** for version control
+
+## Monorepo Structure
+
+This project uses a monorepo structure with PNPM workspaces:
+
+```
+lutend/
+├── backend/           # Python FastAPI backend
+├── web/              # React web application
+├── mobile/           # React Native mobile app
+├── admin/            # React admin dashboard
+├── infrastructure/   # Terraform IaC
+├── shared/           # Shared packages
+│   ├── types/        # TypeScript types
+│   ├── api-client/   # API client SDK
+│   ├── components/   # Shared UI components
+│   ├── design-tokens/# Design system tokens
+│   └── utils/        # Shared utilities
+└── pnpm-workspace.yaml
+```
+
+## PNPM Workspace Commands
+
+### Installing Dependencies
+
+```bash
+# Install all dependencies for all workspaces
+pnpm install
+
+# Install a dependency in a specific workspace
+pnpm --filter web add axios
+pnpm --filter mobile add react-native-gesture-handler
+
+# Install a dev dependency
+pnpm --filter web add -D @types/node
+
+# Add a shared package as a dependency
+pnpm --filter web add @lutend/types@workspace:*
+```
+
+### Running Commands
+
+```bash
+# Run a script in all workspaces
+pnpm -r dev              # Run dev script in all workspaces
+pnpm --parallel dev      # Run dev script in parallel
+
+# Run a script in a specific workspace
+pnpm --filter web dev
+pnpm --filter admin build
+pnpm --filter @lutend/types generate
+
+# Run a script in multiple workspaces
+pnpm --filter web --filter admin dev
+```
+
+### Managing Dependencies
+
+```bash
+# Update dependencies
+pnpm update              # Update all dependencies
+pnpm --filter web update # Update web dependencies only
+
+# Remove a dependency
+pnpm --filter web remove axios
+
+# List dependencies
+pnpm list                # List all dependencies
+pnpm --filter web list   # List web dependencies only
+```
 
 ## Docker Compose
 
-* Start the local stack with Docker Compose:
+- Start the local stack with Docker Compose:
 
 ```bash
 docker compose watch
 ```
 
-* Now you can open your browser and interact with these URLs:
+- Now you can open your browser and interact with these URLs:
 
 Frontend, built with Docker, with routes handled based on the path: http://localhost:5173
 
@@ -38,35 +120,79 @@ docker compose logs backend
 
 The Docker Compose files are configured so that each of the services is available in a different port in `localhost`.
 
-For the backend and frontend, they use the same port that would be used by their local development server, so, the backend is at `http://localhost:8000` and the frontend at `http://localhost:5173`.
+For the backend and web app, they use the same port that would be used by their local development server, so the backend is at `http://localhost:8000` and the web app at `http://localhost:5173`.
 
-This way, you could turn off a Docker Compose service and start its local development service, and everything would keep working, because it all uses the same ports.
+This way, you can turn off a Docker Compose service and start its local development service, and everything will keep working because it all uses the same ports.
 
-For example, you can stop that `frontend` service in the Docker Compose, in another terminal, run:
+### Running Frontend Applications Locally
+
+You can stop the Docker Compose frontend service and run it locally with PNPM:
 
 ```bash
+# Stop the web service in Docker
 docker compose stop frontend
+
+# Run the web app locally with PNPM
+pnpm dev:web
 ```
 
-And then start the local frontend development server:
+Or for other applications:
 
 ```bash
-cd frontend
-npm run dev
+# Run mobile app
+pnpm dev:mobile
+
+# Run admin dashboard
+pnpm dev:admin
 ```
 
-Or you could stop the `backend` Docker Compose service:
+### Running Backend Locally
+
+You can stop the backend Docker Compose service and run it locally:
 
 ```bash
+# Stop the backend service
 docker compose stop backend
-```
 
-And then you can run the local development server for the backend:
-
-```bash
+# Run the backend locally
 cd backend
+source .venv/bin/activate
 fastapi dev app/main.py
 ```
+
+Or use the PNPM script from the root:
+
+```bash
+pnpm dev:backend
+```
+
+### Hybrid Development
+
+You can mix and match - run some services in Docker and others locally:
+
+```bash
+# Run backend, database, and Redis in Docker
+docker compose up -d backend db redis
+
+# Run frontend locally with PNPM
+pnpm dev:web
+```
+
+This is useful when you're only working on the frontend and don't need to modify backend code.
+
+### Working with Shared Packages
+
+When developing shared packages (types, api-client, components, etc.), you may need to rebuild them:
+
+```bash
+# Rebuild a shared package
+pnpm --filter @lutend/types build
+
+# Watch mode for shared packages during development
+pnpm --filter @lutend/types dev
+```
+
+Changes to shared packages are automatically reflected in applications that depend on them thanks to PNPM's workspace protocol.
 
 ## Docker Compose in `localhost.tiangolo.com`
 

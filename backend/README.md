@@ -1,13 +1,39 @@
-# FastAPI Project - Backend
+# Lutend Backend API
+
+The backend is built with [FastAPI](https://fastapi.tiangolo.com), [SQLModel](https://sqlmodel.tiangolo.com), and [PostgreSQL](https://www.postgresql.org).
 
 ## Requirements
 
-* [Docker](https://www.docker.com/).
-* [uv](https://docs.astral.sh/uv/) for Python package and environment management.
+- **[Docker](https://www.docker.com/)** for containerized development
+- **[uv](https://docs.astral.sh/uv/)** for Python package and environment management
+- **Python** >= 3.11
+
+## Monorepo Context
+
+This backend is part of the Lutend monorepo. It serves multiple frontend applications:
+
+- **web/** - React web application
+- **mobile/** - React Native mobile app
+- **admin/** - React admin dashboard
+
+The backend exposes an OpenAPI specification that is used to generate TypeScript types and API clients for the frontend applications. These generated artifacts are stored in the `shared/` directory.
 
 ## Docker Compose
 
 Start the local development environment with Docker Compose following the guide in [../development.md](../development.md).
+
+From the root directory:
+
+```bash
+# Start all services
+docker compose up -d
+
+# Or use PNPM script
+pnpm docker:up
+
+# View logs
+pnpm docker:logs
+```
 
 ## General Workflow
 
@@ -89,17 +115,24 @@ Nevertheless, if it doesn't detect a change but a syntax error, it will just sto
 
 ...this previous detail is what makes it useful to have the container alive doing nothing and then, in a Bash session, make it run the live reload server.
 
-## Backend tests
+## Backend Tests
 
-To test the backend run:
+To test the backend, run:
 
-```console
-$ bash ./scripts/test.sh
+```bash
+# From root directory
+pnpm test:backend
+
+# Or from backend/ directory
+bash ./scripts/test.sh
+
+# Or using Docker
+docker compose exec backend bash scripts/tests-start.sh
 ```
 
-The tests run with Pytest, modify and add tests to `./backend/tests/`.
+The tests run with Pytest. Modify and add tests to `./backend/tests/`.
 
-If you use GitHub Actions the tests will run automatically.
+If you use GitHub Actions, the tests will run automatically on pull requests and pushes.
 
 ### Test running stack
 
@@ -127,23 +160,23 @@ As during local development your app directory is mounted as a volume inside the
 
 Make sure you create a "revision" of your models and that you "upgrade" your database with that revision every time you change them. As this is what will update the tables in your database. Otherwise, your application will have errors.
 
-* Start an interactive session in the backend container:
+- Start an interactive session in the backend container:
 
 ```console
 $ docker compose exec backend bash
 ```
 
-* Alembic is already configured to import your SQLModel models from `./backend/app/models.py`.
+- Alembic is already configured to import your SQLModel models from `./backend/app/models.py`.
 
-* After changing a model (for example, adding a column), inside the container, create a revision, e.g.:
+- After changing a model (for example, adding a column), inside the container, create a revision, e.g.:
 
 ```console
 $ alembic revision --autogenerate -m "Add column last_name to User model"
 ```
 
-* Commit to the git repository the files generated in the alembic directory.
+- Commit to the git repository the files generated in the alembic directory.
 
-* After creating the revision, run the migration in the database (this is what will actually change the database):
+- After creating the revision, run the migration in the database (this is what will actually change the database):
 
 ```console
 $ alembic upgrade head
@@ -170,3 +203,44 @@ The email templates are in `./backend/app/email-templates/`. Here, there are two
 Before continuing, ensure you have the [MJML extension](https://marketplace.visualstudio.com/items?itemName=attilabuti.vscode-mjml) installed in your VS Code.
 
 Once you have the MJML extension installed, you can create a new email template in the `src` directory. After creating the new email template and with the `.mjml` file open in your editor, open the command palette with `Ctrl+Shift+P` and search for `MJML: Export to HTML`. This will convert the `.mjml` file to a `.html` file and now you can save it in the build directory.
+
+## OpenAPI Specification and Frontend Integration
+
+The backend automatically generates an OpenAPI specification that is used by frontend applications.
+
+### Accessing the OpenAPI Spec
+
+When the backend is running, you can access:
+
+- **Interactive API docs (Swagger UI):** http://localhost:8000/docs
+- **Alternative docs (ReDoc):** http://localhost:8000/redoc
+- **OpenAPI JSON:** http://localhost:8000/api/v1/openapi.json
+
+### Generating Frontend Types and Client
+
+After making changes to API endpoints or schemas, regenerate the frontend types and API client:
+
+```bash
+# From root directory
+pnpm generate:types       # Generate TypeScript types
+pnpm generate:api-client  # Generate API client
+
+# Or run both
+pnpm generate:types && pnpm generate:api-client
+```
+
+This updates the shared packages that frontend applications depend on:
+
+- `shared/types/` - TypeScript type definitions
+- `shared/api-client/` - Type-safe API client SDK
+
+### API Development Workflow
+
+1. Modify or add API endpoints in `backend/app/api/routes/`
+2. Update Pydantic schemas in `backend/app/schemas/` (if needed)
+3. Update SQLModel models in `backend/app/models.py` (if needed)
+4. Run backend tests to ensure everything works
+5. Regenerate frontend types and API client
+6. Commit both backend and shared package changes together
+
+This ensures frontend applications always have up-to-date types and API clients.

@@ -1,28 +1,59 @@
-# Full Stack FastAPI Template
+# Lutend Platform
 
-<a href="https://github.com/fastapi/full-stack-fastapi-template/actions?query=workflow%3ATest" target="_blank"><img src="https://github.com/fastapi/full-stack-fastapi-template/workflows/Test/badge.svg" alt="Test"></a>
-<a href="https://coverage-badge.samuelcolvin.workers.dev/redirect/fastapi/full-stack-fastapi-template" target="_blank"><img src="https://coverage-badge.samuelcolvin.workers.dev/fastapi/full-stack-fastapi-template.svg" alt="Coverage"></a>
+Lutend is a matchmaking platform designed to solve common problems in online dating such as doom swiping, ghosting, superficiality, and fake profiles.
+
+## Monorepo Structure
+
+This is a monorepo containing all Lutend applications and infrastructure:
+
+- **backend/** - Python FastAPI backend API
+- **web/** - React web application (browser-based access)
+- **mobile/** - React Native mobile app (iOS & Android)
+- **admin/** - React admin dashboard (staff operations)
+- **infrastructure/** - Terraform infrastructure as code
+- **shared/** - Shared code across applications
+  - **types/** - TypeScript types generated from backend OpenAPI
+  - **api-client/** - Type-safe API client
+  - **components/** - Shared UI components
+  - **design-tokens/** - Design system tokens from Figma
+  - **utils/** - Shared utility functions
 
 ## Technology Stack and Features
 
-- ⚡ [**FastAPI**](https://fastapi.tiangolo.com) for the Python backend API.
-    - 🧰 [SQLModel](https://sqlmodel.tiangolo.com) for the Python SQL database interactions (ORM).
-    - 🔍 [Pydantic](https://docs.pydantic.dev), used by FastAPI, for the data validation and settings management.
-    - 💾 [PostgreSQL](https://www.postgresql.org) as the SQL database.
-- 🚀 [React](https://react.dev) for the frontend.
-    - 💃 Using TypeScript, hooks, Vite, and other parts of a modern frontend stack.
-    - 🎨 [Chakra UI](https://chakra-ui.com) for the frontend components.
-    - 🤖 An automatically generated frontend client.
-    - 🧪 [Playwright](https://playwright.dev) for End-to-End testing.
-    - 🦇 Dark mode support.
-- 🐋 [Docker Compose](https://www.docker.com) for development and production.
-- 🔒 Secure password hashing by default.
-- 🔑 JWT (JSON Web Token) authentication.
-- 📫 Email based password recovery.
-- ✅ Tests with [Pytest](https://pytest.org).
-- 📞 [Traefik](https://traefik.io) as a reverse proxy / load balancer.
-- 🚢 Deployment instructions using Docker Compose, including how to set up a frontend Traefik proxy to handle automatic HTTPS certificates.
-- 🏭 CI (continuous integration) and CD (continuous deployment) based on GitHub Actions.
+### Backend
+
+- ⚡ [**FastAPI**](https://fastapi.tiangolo.com) for the Python backend API
+- 🧰 [SQLModel](https://sqlmodel.tiangolo.com) for Python SQL database interactions (ORM)
+- 🔍 [Pydantic](https://docs.pydantic.dev) for data validation and settings management
+- 💾 [PostgreSQL](https://www.postgresql.org) as the SQL database
+- 🔴 [Redis](https://redis.io) for caching and real-time features
+- 📦 S3-compatible object storage for media files
+
+### Frontend Applications
+
+- 🚀 [React](https://react.dev) for web and admin dashboards
+- 📱 [React Native](https://reactnative.dev) for mobile apps (iOS & Android)
+- 💃 TypeScript, hooks, Vite, and modern frontend stack
+- 🎨 [Chakra UI](https://chakra-ui.com) for UI components
+- 🤖 Automatically generated type-safe API client
+- 🧪 [Playwright](https://playwright.dev) for E2E testing
+- 🦇 Dark mode support
+
+### Infrastructure
+
+- 🏗️ [Terraform](https://www.terraform.io) for infrastructure as code
+- 🐋 [Docker Compose](https://www.docker.com) for development and production
+- ☁️ Cloud-agnostic design (AWS/GCP/Azure support)
+- 📊 Monitoring and logging infrastructure
+
+### Security & DevOps
+
+- 🔒 Secure password hashing by default
+- 🔑 JWT (JSON Web Token) authentication
+- 📫 Email and SMS-based authentication
+- ✅ Tests with [Pytest](https://pytest.org) and Jest
+- 📞 [Traefik](https://traefik.io) as reverse proxy / load balancer
+- 🏭 CI/CD based on GitHub Actions
 
 ### Dashboard Login
 
@@ -212,21 +243,210 @@ The input variables, with their default values (some auto generated) are:
 - `postgres_password`: (default: `"changethis"`) The password for the PostgreSQL database, stored in .env, you can generate one with the method above.
 - `sentry_dsn`: (default: "") The DSN for Sentry, if you are using it, you can set it later in .env.
 
-## Backend Development
+## Getting Started
 
-Backend docs: [backend/README.md](./backend/README.md).
+### Prerequisites
 
-## Frontend Development
+- **Node.js** >= 18.0.0 (use [nvm](https://github.com/nvm-sh/nvm) or [fnm](https://github.com/Schniz/fnm) for version management)
+- **PNPM** >= 8.0.0 (required for monorepo workspace management)
+- **Python** >= 3.11 with [uv](https://docs.astral.sh/uv/) for package management
+- **Docker** and **Docker Compose** for local development
+- **Terraform** >= 1.5.0 (for infrastructure deployment)
 
-Frontend docs: [frontend/README.md](./frontend/README.md).
+### Why PNPM?
+
+This monorepo uses PNPM instead of npm or yarn for several key advantages:
+
+- **Disk Space Efficiency**: PNPM uses a content-addressable store, saving significant disk space
+- **Fast Installation**: Packages are linked from a global store instead of copied
+- **Strict Dependencies**: Prevents phantom dependencies and ensures reproducible builds
+- **Workspace Support**: First-class monorepo support with workspace protocol
+- **Better Performance**: Faster than npm and yarn in most scenarios
+
+For detailed PNPM usage and troubleshooting, see [PNPM-GUIDE.md](./PNPM-GUIDE.md).
+
+### Installation
+
+#### 1. Install PNPM
+
+Choose one of the following methods:
+
+**Using npm (recommended):**
+
+```bash
+npm install -g pnpm@8
+```
+
+**Using Homebrew (macOS):**
+
+```bash
+brew install pnpm
+```
+
+**Using standalone script:**
+
+```bash
+curl -fsSL https://get.pnpm.io/install.sh | sh -
+```
+
+**Verify installation:**
+
+```bash
+pnpm --version  # Should show 8.x.x or higher
+```
+
+#### 2. Install Node.js (if needed)
+
+This project includes a `.nvmrc` file specifying the Node.js version. Use nvm or fnm:
+
+```bash
+# Using fnm (recommended)
+fnm install
+fnm use
+
+# Using nvm
+nvm install
+nvm use
+```
+
+#### 3. Install Dependencies
+
+From the root directory, install all workspace dependencies:
+
+```bash
+pnpm install
+```
+
+This single command installs dependencies for all applications (web, mobile, admin) and shared packages.
+
+#### 4. Set Up Environment Variables
+
+```bash
+cp .env.example .env
+# Edit .env with your configuration
+```
+
+Each application may have its own `.env` file. Check individual README files for details.
+
+#### 5. Start Development Environment
+
+Start all services with Docker Compose:
+
+```bash
+pnpm docker:up
+```
+
+Or use the Docker Compose command directly:
+
+```bash
+docker compose up -d
+```
+
+### Development
+
+#### Run all applications in development mode:
+
+```bash
+pnpm dev
+```
+
+This runs all frontend applications in parallel using PNPM's `--parallel` flag.
+
+#### Run specific applications:
+
+```bash
+pnpm dev:web      # Web app only (React + Vite)
+pnpm dev:mobile   # Mobile app only (React Native)
+pnpm dev:admin    # Admin dashboard only (React + Vite)
+pnpm dev:backend  # Backend API only (FastAPI)
+```
+
+#### Working with workspaces:
+
+```bash
+# Run a command in a specific workspace
+pnpm --filter web <command>
+pnpm --filter mobile <command>
+pnpm --filter admin <command>
+pnpm --filter @lutend/types <command>
+
+# Add a dependency to a specific workspace
+pnpm --filter web add react-query
+pnpm --filter mobile add @react-navigation/native
+
+# Add a shared package as a dependency
+pnpm --filter web add @lutend/types@workspace:*
+pnpm --filter admin add @lutend/api-client@workspace:*
+```
+
+#### Run tests:
+
+```bash
+pnpm test              # All tests across all workspaces
+pnpm test:web          # Web tests only
+pnpm test:mobile       # Mobile tests only
+pnpm test:admin        # Admin tests only
+pnpm test:backend      # Backend tests only (pytest)
+```
+
+#### Lint and format:
+
+```bash
+pnpm lint              # Lint all code
+pnpm lint:web          # Lint web app only
+pnpm format            # Format all code
+pnpm format:backend    # Format backend only
+```
+
+#### Build applications:
+
+```bash
+pnpm build             # Build all applications
+pnpm build:web         # Build web app only
+pnpm build:mobile      # Build mobile app only
+pnpm build:admin       # Build admin dashboard only
+pnpm build:backend     # Build backend Docker image
+```
+
+#### Generate types and API client:
+
+```bash
+pnpm generate:types       # Generate TypeScript types from OpenAPI
+pnpm generate:api-client  # Generate API client from OpenAPI
+```
+
+These commands regenerate shared packages from the backend OpenAPI specification.
+
+#### Clean and reset:
+
+```bash
+pnpm clean             # Remove all node_modules and build artifacts
+pnpm install           # Reinstall all dependencies
+```
+
+#### Docker Compose commands:
+
+```bash
+pnpm docker:up         # Start all services
+pnpm docker:down       # Stop all services
+pnpm docker:logs       # View logs from all services
+```
+
+## Application Documentation
+
+- **Backend**: [backend/README.md](./backend/README.md)
+- **Web App**: [web/README.md](./web/README.md)
+- **Mobile App**: [mobile/README.md](./mobile/README.md)
+- **Admin Dashboard**: [admin/README.md](./admin/README.md)
+- **Infrastructure**: [infrastructure/README.md](./infrastructure/README.md)
 
 ## Deployment
 
-Deployment docs: [deployment.md](./deployment.md).
+Deployment docs: [deployment.md](./deployment.md)
 
-## Development
+## Development Guide
 
-General development docs: [development.md](./development.md).
+General development docs: [development.md](./development.md)
 
 This includes using Docker Compose, custom local domains, `.env` configurations, etc.
 

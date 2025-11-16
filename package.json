@@ -1,0 +1,60 @@
+{
+  "name": "lutend-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lutend matchmaking platform monorepo",
+  "scripts": {
+    "dev": "pnpm run --parallel dev",
+    "dev:web": "pnpm --filter web dev",
+    "dev:mobile": "pnpm --filter mobile start",
+    "dev:admin": "pnpm --filter admin dev",
+    "dev:backend": "cd backend && ./scripts/prestart.sh",
+    "build": "pnpm run --recursive build",
+    "build:web": "pnpm --filter web build",
+    "build:mobile": "pnpm --filter mobile build",
+    "build:admin": "pnpm --filter admin build",
+    "build:backend": "cd backend && docker build -t lutend-backend .",
+    "test": "pnpm run --recursive test",
+    "test:web": "pnpm --filter web test",
+    "test:mobile": "pnpm --filter mobile test",
+    "test:admin": "pnpm --filter admin test",
+    "test:backend": "cd backend && ./scripts/test.sh",
+    "lint": "pnpm run --recursive lint",
+    "lint:web": "pnpm --filter web lint",
+    "lint:mobile": "pnpm --filter mobile lint",
+    "lint:admin": "pnpm --filter admin lint",
+    "lint:backend": "cd backend && ./scripts/lint.sh",
+    "format": "pnpm run --recursive format",
+    "format:web": "pnpm --filter web format",
+    "format:mobile": "pnpm --filter mobile format",
+    "format:admin": "pnpm --filter admin format",
+    "format:backend": "cd backend && ./scripts/format.sh",
+    "type-check": "pnpm run --recursive type-check",
+    "generate:types": "pnpm --filter @lutend/types generate",
+    "generate:api-client": "pnpm --filter @lutend/api-client generate",
+    "clean": "pnpm run --recursive clean && rm -rf node_modules",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  },
+  "keywords": [
+    "monorepo",
+    "matchmaking",
+    "dating",
+    "react",
+    "react-native",
+    "fastapi",
+    "terraform"
+  ],
+  "author": "Lutend Team",
+  "license": "UNLICENSED"
+}

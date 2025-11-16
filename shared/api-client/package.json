@@ -1,0 +1,24 @@
+{
+  "name": "@lutend/api-client",
+  "version": "1.0.0",
+  "description": "Type-safe API client generated from backend OpenAPI spec",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "generate": "openapi-typescript-codegen --input ../../../backend/app/openapi.json --output src/generated --client axios",
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@lutend/types": "workspace:*",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "openapi-typescript-codegen": "^0.27.0",
+    "typescript": "^5.3.3"
+  },
+  "files": [
+    "dist"
+  ]
+}

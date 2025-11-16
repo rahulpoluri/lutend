@@ -1,0 +1,18 @@
+{
+  "name": "@lutend/design-tokens",
+  "version": "1.0.0",
+  "description": "Shared design tokens (colors, typography, spacing) from Figma",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "files": [
+    "dist"
+  ]
+}

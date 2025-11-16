@@ -1,0 +1,29 @@
+{
+  "name": "@lutend/components",
+  "version": "1.0.0",
+  "description": "Shared UI components for web and mobile",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@lutend/design-tokens": "workspace:*",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@storybook/react": "^7.6.0",
+    "@types/react": "^18.2.0",
+    "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  },
+  "files": [
+    "dist"
+  ]
+}

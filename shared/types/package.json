@@ -1,0 +1,20 @@
+{
+  "name": "@lutend/types",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types generated from backend OpenAPI spec",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "generate": "openapi-typescript ../../../backend/app/openapi.json -o src/generated.ts",
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "openapi-typescript": "^6.7.0",
+    "typescript": "^5.3.3"
+  },
+  "files": [
+    "dist"
+  ]
+}
