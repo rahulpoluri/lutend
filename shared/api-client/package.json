@@ -7,6 +7,7 @@
   "scripts": {
     "generate": "openapi-typescript-codegen --input ../../../backend/app/openapi.json --output src/generated --client axios",
     "build": "tsc",
+    "test": "echo 'No tests configured for api-client (generated code)'",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit"
   },

@@ -92,7 +92,7 @@ docker compose watch
 
 - Now you can open your browser and interact with these URLs:
 
-Frontend, built with Docker, with routes handled based on the path: http://localhost:5173
+Admin Dashboard, built with Docker, with routes handled based on the path: http://localhost:5173
 
 Backend, JSON based web API based on OpenAPI: http://localhost:8000
 
@@ -126,14 +126,14 @@ This way, you can turn off a Docker Compose service and start its local developm
 
 ### Running Frontend Applications Locally
 
-You can stop the Docker Compose frontend service and run it locally with PNPM:
+You can stop the Docker Compose admin service and run it locally with PNPM:
 
 ```bash
-# Stop the web service in Docker
-docker compose stop frontend
+# Stop the admin service in Docker
+docker compose stop admin
 
-# Run the web app locally with PNPM
-pnpm dev:web
+# Run the admin dashboard locally with PNPM
+pnpm dev:admin
 ```
 
 Or for other applications:
@@ -174,11 +174,11 @@ You can mix and match - run some services in Docker and others locally:
 # Run backend, database, and Redis in Docker
 docker compose up -d backend db redis
 
-# Run frontend locally with PNPM
-pnpm dev:web
+# Run admin dashboard locally with PNPM
+pnpm dev:admin
 ```
 
-This is useful when you're only working on the frontend and don't need to modify backend code.
+This is useful when you're only working on the admin dashboard and don't need to modify backend code.
 
 ### Working with Shared Packages
 
@@ -196,9 +196,9 @@ Changes to shared packages are automatically reflected in applications that depe
 
 ## Docker Compose in `localhost.tiangolo.com`
 
-When you start the Docker Compose stack, it uses `localhost` by default, with different ports for each service (backend, frontend, adminer, etc).
+When you start the Docker Compose stack, it uses `localhost` by default, with different ports for each service (backend, admin, adminer, etc).
 
-When you deploy it to production (or staging), it will deploy each service in a different subdomain, like `api.example.com` for the backend and `dashboard.example.com` for the frontend.
+When you deploy it to production (or staging), it will deploy each service in a different subdomain, like `api.example.com` for the backend and `dashboard.example.com` for the admin dashboard.
 
 In the guide about [deployment](deployment.md) you can read about Traefik, the configured proxy. That's the component in charge of transmitting traffic to each service based on the subdomain.
 
@@ -210,7 +210,7 @@ DOMAIN=localhost.tiangolo.com
 
 That will be used by the Docker Compose files to configure the base domain for the services.
 
-Traefik will use this to transmit traffic at `api.localhost.tiangolo.com` to the backend, and traffic at `dashboard.localhost.tiangolo.com` to the frontend.
+Traefik will use this to transmit traffic at `api.localhost.tiangolo.com` to the backend, and traffic at `dashboard.localhost.tiangolo.com` to the admin dashboard.
 
 The domain `localhost.tiangolo.com` is a special domain that is configured (with all its subdomains) to point to `127.0.0.1`. This way you can use that for your local development.
 
@@ -300,7 +300,7 @@ The production or staging URLs would use these same paths, but with your own dom
 
 Development URLs, for local development.
 
-Frontend: http://localhost:5173
+Admin Dashboard: http://localhost:5173
 
 Backend: http://localhost:8000
 
@@ -318,7 +318,7 @@ MailCatcher: http://localhost:1080
 
 Development URLs, for local development.
 
-Frontend: http://dashboard.localhost.tiangolo.com
+Admin Dashboard: http://dashboard.localhost.tiangolo.com
 
 Backend: http://api.localhost.tiangolo.com
 

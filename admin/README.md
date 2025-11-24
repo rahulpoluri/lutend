@@ -1,65 +1,89 @@
-# Lutend Admin Dashboard
+# Lutend Web App
 
-React web application for Lutend staff to manage users, content, and platform operations.
+The web application is built with [Vite](https://vitejs.dev/), [React](https://reactjs.org/), [TypeScript](https://www.typescriptlang.org/), [TanStack Query](https://tanstack.com/query), [TanStack Router](https://tanstack.com/router) and [Chakra UI](https://chakra-ui.com/).
 
 ## Prerequisites
 
 - **Node.js** >= 18.0.0 (use nvm or fnm for version management)
 - **PNPM** >= 8.0.0 (required for monorepo workspace management)
 
-This project is part of the Lutend monorepo. See the [root README](../README.md) and [PNPM-GUIDE](../PNPM-GUIDE.md) for more information.
+This project is part of a monorepo and uses PNPM workspaces. See the [root README](../README.md) and [PNPM-GUIDE](../PNPM-GUIDE.md) for more information.
 
-## Setup
+## Development Setup
 
 ### Option 1: Using PNPM from Root (Recommended)
 
+The recommended way to work with the web app is using PNPM commands from the monorepo root:
+
 ```bash
 # From the root directory
-pnpm dev:admin        # Start development server
-pnpm build:admin      # Build for production
-pnpm test:admin       # Run tests
+pnpm dev:web          # Start development server
+pnpm build:web        # Build for production
+pnpm test:web         # Run tests
+pnpm lint:web         # Lint code
 ```
 
-### Option 2: Working Directly in the Admin Directory
+### Option 2: Working Directly in the Web Directory
 
-1. **Install dependencies:**
+If you prefer to work directly in the `web/` directory:
+
+1. **Ensure Node.js version is correct:**
+
+   The project includes a `.nvmrc` file specifying the Node.js version.
+
+   ```bash
+   # If using fnm (recommended)
+   fnm install
+   fnm use
+
+   # If using nvm
+   nvm install
+   nvm use
+   ```
+
+2. **Install dependencies:**
 
    From the root directory (this installs dependencies for all workspaces):
 
    ```bash
-   cd ..  # Go to root if you're in admin/
+   cd ..  # Go to root if you're in web/
    pnpm install
    ```
 
-2. **Start development server:**
+3. **Start the development server:**
 
    ```bash
-   cd admin
+   cd web
    pnpm dev
    ```
 
    Or from the root:
 
    ```bash
-   pnpm dev:admin
+   pnpm dev:web
    ```
 
-3. **Open browser to http://localhost:5173**
+4. **Open your browser at http://localhost:5173/**
 
-## Development
+The development server runs with hot module replacement (HMR), so changes are reflected immediately without full page reloads.
 
-This app uses:
+## Available Scripts
 
-- **React** for UI
-- **Vite** for fast development and building
-- **TypeScript** for type safety
-- **React Router** for navigation
-- **Chakra UI** for UI components
-- **TanStack Query** for server state management
+When working in the `web/` directory, you can use these PNPM scripts:
 
-### Shared Packages
+```bash
+pnpm dev              # Start development server
+pnpm build            # Build for production
+pnpm preview          # Preview production build locally
+pnpm test             # Run tests
+pnpm lint             # Lint code
+pnpm format           # Format code with Prettier
+pnpm type-check       # Run TypeScript type checking
+```
 
-The admin dashboard uses shared packages from the monorepo:
+## Working with Shared Packages
+
+The web app uses shared packages from the monorepo:
 
 - `@lutend/types` - TypeScript types generated from backend OpenAPI
 - `@lutend/api-client` - Type-safe API client
@@ -67,111 +91,142 @@ The admin dashboard uses shared packages from the monorepo:
 - `@lutend/design-tokens` - Design system tokens
 - `@lutend/utils` - Shared utility functions
 
-These are automatically linked via PNPM workspaces. Changes to shared packages are immediately available.
+These are automatically linked via PNPM workspaces. When you make changes to shared packages, they're immediately available in the web app.
 
-### Adding Shared Packages
+### Adding Shared Packages as Dependencies
 
-To add a shared package to the admin dashboard:
+To add a shared package to the web app:
 
 ```bash
 # From root directory
-pnpm --filter admin add @lutend/types@workspace:*
+pnpm --filter web add @lutend/types@workspace:*
 
-# Or from admin/ directory
+# Or from web/ directory
 pnpm add @lutend/types@workspace:*
 ```
 
-## Available Scripts
+The `workspace:*` protocol ensures you're using the local workspace version.
+
+### Removing the frontend
+
+If you are developing an API-only app and want to remove the frontend, you can do it easily:
+
+- Remove the `./frontend` directory.
+
+- In the `docker-compose.yml` file, remove the whole service / section `frontend`.
+
+- In the `docker-compose.override.yml` file, remove the whole service / section `frontend` and `playwright`.
+
+Done, you have a frontend-less (api-only) app. 🤓
+
+---
+
+If you want, you can also remove the `FRONTEND` environment variables from:
+
+- `.env`
+- `./scripts/*.sh`
+
+But it would be only to clean them up, leaving them won't really have any effect either way.
+
+## Generate API Client
+
+The web app uses a generated API client from the backend's OpenAPI specification. This client is maintained in the shared `@lutend/api-client` package.
+
+### Automatically (Recommended)
+
+From the root directory, run:
 
 ```bash
-pnpm dev              # Start development server
-pnpm build            # Build for production
-pnpm preview          # Preview production build
-pnpm test             # Run tests
-pnpm lint             # Lint code
-pnpm format           # Format code
-pnpm type-check       # Run TypeScript type checking
+pnpm generate:api-client
 ```
 
-## Testing
+This regenerates the API client in `shared/api-client/` from the backend's OpenAPI spec.
 
-Run tests:
+### Manually
 
-```bash
-# From root directory
-pnpm test:admin
+1. Start the Docker Compose stack:
 
-# Or from admin/ directory
-pnpm test
-```
+   ```bash
+   docker compose up -d backend
+   ```
 
-## Building
+2. Download the OpenAPI JSON file:
 
-Build for production:
+   ```bash
+   curl http://localhost:8000/api/v1/openapi.json -o openapi.json
+   ```
 
-```bash
-# From root directory
-pnpm build:admin
+3. Generate the client:
 
-# Or from admin/ directory
-pnpm build
-```
+   ```bash
+   pnpm --filter @lutend/api-client generate
+   ```
 
-Preview production build:
+4. Commit the changes to the shared package.
 
-```bash
-pnpm preview
-```
+**Note:** Whenever the backend API changes (modifying endpoints, request/response schemas), you should regenerate the API client to keep the frontend in sync.
 
-The build output will be in the `dist/` directory.
+## Using a Remote API
 
-## Features
-
-- **User Verification Management** - Review and approve/reject user verifications
-- **User Moderation** - Ban, warn, and manage user accounts
-- **Content Management System** - Create and manage articles and videos
-- **Platform Analytics** - View metrics, charts, and insights
-- **Support Ticket Management** - Handle user support requests
-- **Payment and Credit Management** - Manage transactions and refunds
-- **Report Management** - Review user reports with meeting logs
-
-## Authentication
-
-The admin dashboard uses separate authentication from the main app. Admin users must have the appropriate role assigned in the backend.
-
-## Environment Variables
-
-Create a `.env` file in the `admin/` directory:
+If you want to use a remote API, you can set the environment variable `VITE_API_URL` to the URL of the remote API. For example, you can set it in the `frontend/.env` file:
 
 ```env
-VITE_API_URL=http://localhost:8000
+VITE_API_URL=https://api.my-domain.example.com
 ```
 
-For production, set the appropriate API URL.
+Then, when you run the frontend, it will use that URL as the base URL for the API.
 
-## Troubleshooting
+## Code Structure
 
-### Port Already in Use
+The frontend code is structured as follows:
 
-If port 5173 is already in use:
+- `frontend/src` - The main frontend code.
+- `frontend/src/assets` - Static assets.
+- `frontend/src/client` - The generated OpenAPI client.
+- `frontend/src/components` - The different components of the frontend.
+- `frontend/src/hooks` - Custom hooks.
+- `frontend/src/routes` - The different routes of the frontend which include the pages.
+- `theme.tsx` - The Chakra UI custom theme.
 
-```bash
-# Kill the process using the port
-lsof -ti:5173 | xargs kill -9
+## End-to-End Testing with Playwright
 
-# Or use a different port
-pnpm dev --port 5174
-```
+The web app includes end-to-end tests using Playwright. To run the tests, you need to have the Docker Compose stack running.
 
-### Build Errors
+### Running Tests
 
-```bash
-# Clear cache and rebuild
-rm -rf node_modules dist
-cd ..  # Go to root
-pnpm install
-cd admin
-pnpm build
-```
+1. Start the backend stack:
 
-For more troubleshooting tips, see [PNPM-GUIDE.md](../PNPM-GUIDE.md).
+   ```bash
+   docker compose up -d --wait backend
+   ```
+
+2. Run the tests:
+
+   ```bash
+   # From root directory
+   pnpm test:web
+
+   # Or from web/ directory
+   pnpm test
+
+   # Or using Playwright directly
+   pnpm exec playwright test
+   ```
+
+3. Run tests in UI mode (interactive):
+
+   ```bash
+   pnpm exec playwright test --ui
+   ```
+
+4. Clean up after tests:
+
+   ```bash
+   docker compose down -v
+   ```
+
+### Writing Tests
+
+Tests are located in the `tests/` directory. To add new tests, create or modify test files following the existing patterns.
+
+For more information on writing and running Playwright tests, refer to the official [Playwright documentation](https://playwright.dev/docs/intro).
