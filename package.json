@@ -35,7 +35,10 @@
     "clean": "pnpm run --recursive clean && rm -rf node_modules",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
-    "docker:logs": "docker-compose logs -f"
+    "docker:logs": "docker-compose logs -f",
+    "test:all": "bash scripts/test-all-local.sh",
+    "test:quick": "bash scripts/quick-test.sh",
+    "test:ci": "bash scripts/test-all-local.sh"
   },
   "engines": {
     "node": ">=18.0.0",

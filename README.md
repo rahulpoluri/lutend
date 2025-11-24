@@ -31,7 +31,7 @@ This is a monorepo containing all Lutend applications and infrastructure:
 
 ### Frontend Applications
 
-- 🚀 [React](https://react.dev) for web and admin dashboards
+- 🚀 [React](https://react.dev) for web app and admin dashboard
 - 📱 [React Native](https://reactnative.dev) for mobile apps (iOS & Android)
 - 💃 TypeScript, hooks, Vite, and modern frontend stack
 - 🎨 [Chakra UI](https://chakra-ui.com) for UI components
@@ -350,7 +350,7 @@ docker compose up -d
 pnpm dev
 ```
 
-This runs all frontend applications in parallel using PNPM's `--parallel` flag.
+This runs all applications in parallel using PNPM's `--parallel` flag.
 
 #### Run specific applications:
 

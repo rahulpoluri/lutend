@@ -1,8 +1,7 @@
 services:
-
   # Local services are available on their ports, but also available on:
   # http://api.localhost.tiangolo.com: backend
-  # http://dashboard.localhost.tiangolo.com: frontend
+  # http://dashboard.localhost.tiangolo.com: admin
   # etc. To enable it, update .env, set:
   # DOMAIN=localhost.tiangolo.com
   proxy:
@@ -92,19 +91,19 @@ services:
       - "1080:1080"
       - "1025:1025"
 
-  frontend:
+  admin:
     restart: "no"
     ports:
       - "5173:80"
     build:
-      context: ./frontend
+      context: ./admin
       args:
         - VITE_API_URL=http://localhost:8000
         - NODE_ENV=development
 
   playwright:
     build:
-      context: ./frontend
+      context: ./admin
       dockerfile: Dockerfile.playwright
       args:
         - VITE_API_URL=http://backend:8000
@@ -122,8 +121,8 @@ services:
       - PLAYWRIGHT_HTML_HOST=0.0.0.0
       - CI=${CI}
     volumes:
-      - ./frontend/blob-report:/app/blob-report
-      - ./frontend/test-results:/app/test-results
+      - ./admin/blob-report:/app/blob-report
+      - ./admin/test-results:/app/test-results
     ports:
       - 9323:9323
 

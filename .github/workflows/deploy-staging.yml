@@ -8,7 +8,8 @@ on:
 jobs:
   deploy:
     # Do not deploy in the main repository, only in user projects
-    if: github.repository_owner != 'fastapi'
+    # Disabled until self-hosted staging runner is configured
+    if: false
     runs-on:
       - self-hosted
       - staging
