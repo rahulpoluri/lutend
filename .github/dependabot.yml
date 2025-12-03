@@ -1,41 +1,71 @@
-  version: 2
-  updates:
-    # GitHub Actions
-    - package-ecosystem: github-actions
-      directory: /
-      schedule:
-        interval: daily
-      commit-message:
-        prefix: ⬆
-    # Python uv
-    - package-ecosystem: uv
-      directory: /backend
-      schedule:
-        interval: weekly
-      commit-message:
-        prefix: ⬆
-    # npm
-    - package-ecosystem: npm
-      directory: /admin
-      schedule:
-        interval: weekly
-      commit-message:
-        prefix: ⬆
-      ignore:
-        - dependency-name: "@hey-api/openapi-ts"
-    # Docker
-    - package-ecosystem: docker
-      directories:
-        - /backend
-        - /admin
-      schedule:
-        interval: weekly
-      commit-message:
-        prefix: ⬆
-    # Docker Compose
-    - package-ecosystem: docker-compose
-      directory: /
-      schedule:
-        interval: weekly
-      commit-message:
-        prefix: ⬆
+version: 2
+updates:
+  ############################################################
+  # GitHub Actions (major + security updates only)
+  ############################################################
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: ⬆
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
+  ############################################################
+  # Python (uv) — backend (major + security updates only)
+  ############################################################
+  - package-ecosystem: uv
+    directory: /backend
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ⬆
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
+  ############################################################
+  # npm (Admin App) — pnpm lockfile supported (major + security only)
+  ############################################################
+  - package-ecosystem: npm
+    directory: /admin
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ⬆
+    ignore:
+      # Your existing exception
+      - dependency-name: "@hey-api/openapi-ts"
+      # Ignore all minor/patch updates globally
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
+  ############################################################
+  # Dockerfiles (major + security only)
+  ############################################################
+  - package-ecosystem: docker
+    directories:
+      - /backend
+      - /admin
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ⬆
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
+  ############################################################
+  # Docker Compose (major + security only)
+  ############################################################
+  - package-ecosystem: docker-compose
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ⬆
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
