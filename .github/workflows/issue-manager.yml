@@ -20,8 +20,8 @@ permissions:
 
 jobs:
   issue-manager:
-    if: github.repository_owner == 'fastapi'
-    runs-on: ubuntu-latest
+    if: github.repository_owner == 'rahulpoluri'
+    runs-on: ubuntu-24.04
     steps:
       - name: Dump GitHub context
         env:

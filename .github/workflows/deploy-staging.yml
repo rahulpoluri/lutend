@@ -31,3 +31,180 @@ jobs:
         uses: actions/checkout@v5
       - run: docker compose -f docker-compose.yml --project-name ${{ secrets.STACK_NAME_STAGING }} build
       - run: docker compose -f docker-compose.yml --project-name ${{ secrets.STACK_NAME_STAGING }} up -d
+
+
+
+# name: Deploy to ECS staging
+
+# on:
+#   release:
+#     types:
+#       - published
+
+# jobs:
+#   deploy:
+#     if: false
+#     runs-on: ubuntu-24.04
+
+#     steps:
+#       # 1. Checkout code
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       # 2. Configure AWS credentials
+#       - name: Configure AWS credentials
+#         uses: aws-actions/configure-aws-credentials@v4
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: us-east-1
+
+#       # 3. Login to ECR
+#       - name: Login to ECR
+#         uses: aws-actions/amazon-ecr-login@v2
+
+#       ###############################################
+#       # BACKEND BUILD & PUSH
+#       ###############################################
+#       - name: Build, tag & push backend image
+#         run: |
+#           docker build -t backend ./backend
+#           docker tag backend:latest ${{ secrets.ECR_BACKEND_REPO }}:latest
+#           docker push ${{ secrets.ECR_BACKEND_REPO }}:latest
+
+#       ###############################################
+#       # ADMIN BUILD & PUSH
+#       ###############################################
+#       - name: Build, tag & push admin image
+#         run: |
+#           docker build -t admin ./admin
+#           docker tag admin:latest ${{ secrets.ECR_ADMIN_REPO }}:latest
+#           docker push ${{ secrets.ECR_ADMIN_REPO }}:latest
+
+#       ###############################################
+#       # WEB FRONTEND BUILD & PUSH
+#       ###############################################
+#       - name: Build, tag & push web image
+#         run: |
+#           docker build -t web ./web
+#           docker tag web:latest ${{ secrets.ECR_WEB_REPO }}:latest
+#           docker push ${{ secrets.ECR_WEB_REPO }}:latest
+
+#       ###############################################
+#       # DEPLOY ALL SERVICES TO ECS
+#       ###############################################
+
+#       - name: Deploy Backend Service
+#         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+#         with:
+#           task-definition: ecs/backend-task.json
+#           service: ${{ secrets.ECS_BACKEND_SERVICE }}
+#           cluster: ${{ secrets.ECS_CLUSTER }}
+#           wait-for-service-stability: true
+
+#       - name: Deploy Admin Service
+#         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+#         with:
+#           task-definition: ecs/admin-task.json
+#           service: ${{ secrets.ECS_ADMIN_SERVICE }}
+#           cluster: ${{ secrets.ECS_CLUSTER }}
+#           wait-for-service-stability: true
+
+#       - name: Deploy Web Service
+#         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+#         with:
+#           task-definition: ecs/web-task.json
+#           service: ${{ secrets.ECS_WEB_SERVICE }}
+#           cluster: ${{ secrets.ECS_CLUSTER }}
+#           wait-for-service-stability: true
+
+
+
+
+
+# ecs/
+#   backend-task.json
+#   admin-task.json
+#   web-task.json
+
+
+
+# {
+#   "family": "backend-task",
+#   "networkMode": "awsvpc",
+#   "requiresCompatibilities": ["FARGATE"],
+#   "cpu": "512",
+#   "memory": "1024",
+#   "containerDefinitions": [
+#     {
+#       "name": "backend",
+#       "image": "<REPLACE_WITH_ECR_BACKEND_REPO>:latest",
+#       "portMappings": [
+#         { "containerPort": 8000, "protocol": "tcp" }
+#       ],
+#       "environment": [
+#         { "name": "ENV", "value": "production" }
+#       ],
+#       "logConfiguration": {
+#         "logDriver": "awslogs",
+#         "options": {
+#           "awslogs-group": "/ecs/backend",
+#           "awslogs-region": "us-east-1",
+#           "awslogs-stream-prefix": "ecs"
+#         }
+#       }
+#     }
+#   ]
+# }
+
+
+# {
+#   "family": "admin-task",
+#   "networkMode": "awsvpc",
+#   "requiresCompatibilities": ["FARGATE"],
+#   "cpu": "256",
+#   "memory": "512",
+#   "containerDefinitions": [
+#     {
+#       "name": "admin",
+#       "image": "<REPLACE_WITH_ECR_ADMIN_REPO>:latest",
+#       "portMappings": [
+#         { "containerPort": 3001, "protocol": "tcp" }
+#       ],
+#       "logConfiguration": {
+#         "logDriver": "awslogs",
+#         "options": {
+#           "awslogs-group": "/ecs/admin",
+#           "awslogs-region": "us-east-1",
+#           "awslogs-stream-prefix": "ecs"
+#         }
+#       }
+#     }
+#   ]
+# }
+
+
+# {
+#   "family": "web-task",
+#   "networkMode": "awsvpc",
+#   "requiresCompatibilities": ["FARGATE"],
+#   "cpu": "256",
+#   "memory": "512",
+#   "containerDefinitions": [
+#     {
+#       "name": "web",
+#       "image": "<REPLACE_WITH_ECR_WEB_REPO>:latest",
+#       "portMappings": [
+#         { "containerPort": 3000, "protocol": "tcp" }
+#       ],
+#       "logConfiguration": {
+#         "logDriver": "awslogs",
+#         "options": {
+#           "awslogs-group": "/ecs/web",
+#           "awslogs-region": "us-east-1",
+#           "awslogs-stream-prefix": "ecs"
+#         }
+#       }
+#     }
+#   ]
+# }

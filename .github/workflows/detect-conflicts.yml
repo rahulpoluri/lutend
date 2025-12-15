@@ -1,3 +1,4 @@
+# we need this to label the pr of dependabot PRs
 name: "Conflict detector"
 on:
   push:
@@ -9,7 +10,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check if PRs have merge conflicts
         uses: eps1lon/actions-label-merge-conflict@v3
