@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       # For PRs from the same repo
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         if: ( github.event_name != 'pull_request' || github.secret_source == 'Actions' )
         with:
           ref: ${{ github.head_ref }}
